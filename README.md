@@ -1,6 +1,6 @@
 # Accent bot
 
-Source code of Aiogram based telegram bot that can help you to learn difficult cases of accent in words.
+Source code of Aiogram based telegram bot that can help you to learn difficult cases of accent in words. 
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/ICY9k5?referralCode=RmyABJ)
 
