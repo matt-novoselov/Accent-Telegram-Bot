@@ -38,10 +38,10 @@ async def connect_db():
 
 async def get_cursor():
     global mydb
-    try:
-        await mydb.ping(reconnect=True)
-    except Error:
+    await mydb.ping()
+    if mydb.closed:
         mydb = loop.run_until_complete(connect_db())
+
     return mydb.cursor()
 
 
@@ -77,7 +77,7 @@ async def update_score(user_id, amount):
             data_query = (user_id,)
             await cur.execute(query, data_query)
             current_score = await cur.fetchall()  # Get current score
-            current_score = current_score[0][0]
+            current_score = list(current_score)[0][0]
             new_score = current_score + amount  # Calculate new score
 
             sql = "UPDATE EgeBotUsers SET Score = %s WHERE TelegramUserID = %s"
