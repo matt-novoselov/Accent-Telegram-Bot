@@ -117,3 +117,30 @@ async def get_stats(user_id):
         except Error as e:
             print(f'[!] There was an error in getting stats: {e}')
             pass
+
+
+async def CheckReferral(args, uid):
+    async with await get_cursor() as cur:
+        try:
+            if int(args) != int(uid):
+                query = "SELECT ReferralActivated FROM EgeBotUsers WHERE TelegramUserID = %s"
+                data_query = (uid,)
+                await cur.execute(query, data_query)
+                IsActivated = (await cur.fetchall())[0][0]
+                if IsActivated == 0:
+                    sql = "UPDATE EgeBotUsers SET ReferralActivated = %s WHERE TelegramUserID = %s"
+                    val = (1, uid)
+                    await cur.execute(sql, val)
+                    await mydb.commit()  # Update DB Score
+                    await update_score(uid, 50)
+                    await update_score(args, 50)
+                    print(f'[v] {args} invited {uid}')
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        except Error as e:
+            print(f'[!] There was an error in activating referral: {e}')
+            pass
