@@ -43,7 +43,6 @@ async def GenerateAccents():
                 i -= 1
         return inline_kb_full
 
-    except:
-        print("[!] Failed to send a new game. Trying again...")
+    except Exception as e:
+        print(f'[!] There was an error in generating accents: {e}')
         pass
-        await GenerateAccents()

@@ -52,8 +52,13 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler()
 async def send_game(message: types.Message):
-    await bot.send_message(message.chat.id, "💬 На какую букву ставится ударение в этом слове?", parse_mode="Markdown",
+    try:
+        await bot.send_message(message.chat.id, "💬 На какую букву ставится ударение в этом слове?", parse_mode="Markdown",
                            reply_markup=await AccentWord.GenerateAccents())
+    except:
+        print("[!] Failed to send a new game. Trying again...")
+        await send_game(message)
+        pass
 
 
 @dp.callback_query_handler()
