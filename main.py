@@ -34,6 +34,8 @@ async def get_top(message: types.Message):
 
 @dp.message_handler(commands=['start'])  # Run on /start command.
 async def send_welcome(message: types.Message):
+    await mysql_database.add_new_user_to_database(message.from_user.id, message['from']["first_name"],
+                                                  message['from']["last_name"])  # Add new user to database
     args = message.get_args()
     if len(args) > 0:
         check_bonus = await mysql_database.CheckReferral(args, message.from_user.id)
@@ -41,8 +43,6 @@ async def send_welcome(message: types.Message):
             await bot.send_message(message.from_user.id, '🎁 Тебе начислено *50 баллов* за регистрацию!', parse_mode="Markdown")
             await bot.send_message(args, '🎁 Кто-то зарегистрировался по твоей ссылке. Тебе начислено *50 баллов!*', parse_mode="Markdown")
 
-    await mysql_database.add_new_user_to_database(message.from_user.id, message['from']["first_name"],
-                                                  message['from']["last_name"])  # Add new user to database
     await bot.send_message(message.from_user.id, f"Привет, *{message.from_user.full_name}!*" +
                            '\n\nЯ - бот для повторения сложных случаев 4-го задания на ЕГЭ.' +
                            "\n\nНажми на слово, в котором верно поставлено ударение: ", parse_mode="Markdown",
