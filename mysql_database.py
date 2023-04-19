@@ -97,7 +97,7 @@ async def update_score(user_id, amount):
 async def get_stats(user_id):
     async with await get_cursor() as cur:
         try:
-            sql = "SELECT Name, Score FROM EgeBotUsers ORDER BY Score DESC LIMIT 3"
+            sql = "SELECT Name, Score FROM EgeBotUsers ORDER BY Score DESC LIMIT 5"
             await cur.execute(sql)
             chart_stats = list(await cur.fetchall())
 
@@ -112,7 +112,9 @@ async def get_stats(user_id):
                 f'\n🥇*{chart_stats[0][0]}* - `{chart_stats[0][1]}`' \
                 f'\n🥈*{chart_stats[1][0]}* - `{chart_stats[1][1]}`' \
                 f'\n🥉*{chart_stats[2][0]}* - `{chart_stats[2][1]}`' \
-                f'\n\n*{chart_stats[3][0]}* (я) - `{chart_stats[3][1]}`'
+                f'\n▫️*{chart_stats[3][0]}* - `{chart_stats[3][1]}`' \
+                f'\n▫️*{chart_stats[4][0]}* - `{chart_stats[4][1]}`' \
+                f'\n\n*{chart_stats[5][0]}* (я) - `{chart_stats[5][1]}`'
 
             return my_result
 
