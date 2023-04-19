@@ -79,6 +79,8 @@ async def update_score(user_id, amount):
             current_score = await cur.fetchall()  # Get current score
             current_score = list(current_score)[0][0]
             new_score = current_score + amount  # Calculate new score
+            if new_score < 0:
+                new_score = 0
 
             sql = "UPDATE EgeBotUsers SET Score = %s WHERE TelegramUserID = %s"
             val = (new_score, user_id)

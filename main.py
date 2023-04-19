@@ -65,15 +65,17 @@ async def send_game(message: types.Message):
 async def process_callback_button1(callback_query: types.CallbackQuery):
     data_set = callback_query.data.split("#")
     if data_set[0] == data_set[1]:
-        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], +10)
-        await callback_query["message"].edit_text(text=f"✅ *{data_set[1]}*\n\n`+10` | Ваш счёт: `{user_score}`",
+        fine = 10
+        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine)
+        await callback_query["message"].edit_text(text=f"✅ *{data_set[1]}*\n\n`+{fine}` | Ваш счёт: `{user_score}`",
                                                   parse_mode="Markdown")
     else:
+        fine = -30
         print(
             f'[x] User {callback_query["message"]["chat"]["id"]} answered wrong {data_set[0]}. The correct answer is {data_set[1]}')
-        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], -50)
+        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine)
         await callback_query["message"].edit_text(
-            text=f"❌ Запомни: *{data_set[1]}*\n\n`-50` | Ваш счёт: `{user_score}`",
+            text=f"❌ Запомни: *{data_set[1]}*\n\n`{fine}` | Ваш счёт: `{user_score}`",
             parse_mode="Markdown")
     await send_game(callback_query["message"])
 
