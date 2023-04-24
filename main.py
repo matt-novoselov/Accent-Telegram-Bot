@@ -28,7 +28,8 @@ async def get_top(message: types.Message):
 async def get_top(message: types.Message):
     link = await get_start_link(message.from_user.id)
     await message.reply(f'🎁 *Приглашай друзей и получай баллы!*\n\nОтправь эту ссылку своим знакомым. Если твой друг '
-                        f'зарегистрируется по ссылке ниже, то каждому из вас начислится по *+50 баллов!*', parse_mode="Markdown")
+                        f'зарегистрируется по ссылке ниже, то каждому из вас начислится по *+50 баллов!*',
+                        parse_mode="Markdown")
     await message.answer(link)
 
 
@@ -40,8 +41,10 @@ async def send_welcome(message: types.Message):
     if len(args) > 0:
         check_bonus = await mysql_database.CheckReferral(args, message.from_user.id)
         if check_bonus:
-            await bot.send_message(message.from_user.id, '🎁 Тебе начислено *50 баллов* за регистрацию!', parse_mode="Markdown")
-            await bot.send_message(args, '🎁 Кто-то зарегистрировался по твоей ссылке. Тебе начислено *50 баллов!*', parse_mode="Markdown")
+            await bot.send_message(message.from_user.id, '🎁 Тебе начислено *50 баллов* за регистрацию!',
+                                   parse_mode="Markdown")
+            await bot.send_message(args, '🎁 Кто-то зарегистрировался по твоей ссылке. Тебе начислено *50 баллов!*',
+                                   parse_mode="Markdown")
 
     await bot.send_message(message.from_user.id, f"Привет, *{message.from_user.full_name}!*" +
                            '\n\nЯ - бот для повторения сложных случаев 4-го задания на ЕГЭ.' +
@@ -53,12 +56,12 @@ async def send_welcome(message: types.Message):
 @dp.message_handler()
 async def send_game(message: types.Message):
     try:
-        await bot.send_message(message.chat.id, "💬 На какую букву ставится ударение в этом слове?", parse_mode="Markdown",
-                           reply_markup=await AccentWord.GenerateAccents())
-    except:
-        print("[!] Failed to send a new game. Trying again...")
+        await bot.send_message(message.chat.id, "💬 На какую букву ставится ударение в этом слове?",
+                               parse_mode="Markdown",
+                               reply_markup=await AccentWord.GenerateAccents())
+    except Exception as e:
+        print(f"[!] Failed to send a new game. Trying again... Reason: {e}")
         await send_game(message)
-        pass
 
 
 @dp.callback_query_handler()
@@ -67,16 +70,24 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     if data_set[0] == data_set[1]:
         fine = 10
         user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine)
-        await callback_query["message"].edit_text(text=f"✅ *{data_set[1]}*\n\n`+{fine}` | Ваш счёт: `{user_score}`",
+        try:
+            await callback_query["message"].edit_text(text=f"✅ *{data_set[1]}*\n\n`+{fine}` | Ваш счёт: `{user_score}`",
                                                   parse_mode="Markdown")
+        except Exception as e:
+            print(f'[!] There was an error in editing message after response: {e}')
+            pass
     else:
         fine = -30
         print(
             f'[x] User {callback_query["message"]["chat"]["id"]} answered wrong {data_set[0]}. The correct answer is {data_set[1]}')
         user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine)
-        await callback_query["message"].edit_text(
-            text=f"❌ Запомни: *{data_set[1]}*\n\n`{fine}` | Ваш счёт: `{user_score}`",
-            parse_mode="Markdown")
+        try:
+            await callback_query["message"].edit_text(
+                text=f"❌ Запомни: *{data_set[1]}*\n\n`{fine}` | Ваш счёт: `{user_score}`",
+                parse_mode="Markdown")
+        except Exception as e:
+            print(f'[!] There was an error in editing message after response: {e}')
+            pass
     await send_game(callback_query["message"])
 
 

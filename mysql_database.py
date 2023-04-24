@@ -109,12 +109,12 @@ async def get_stats(user_id):
 
             my_result = \
                 '🏆 Топ игроков по очкам:\n' \
-                f'\n🥇*{chart_stats[0][0]}* - `{chart_stats[0][1]}`' \
-                f'\n🥈*{chart_stats[1][0]}* - `{chart_stats[1][1]}`' \
-                f'\n🥉*{chart_stats[2][0]}* - `{chart_stats[2][1]}`' \
-                f'\n▫️*{chart_stats[3][0]}* - `{chart_stats[3][1]}`' \
-                f'\n▫️*{chart_stats[4][0]}* - `{chart_stats[4][1]}`' \
-                f'\n\n*{chart_stats[5][0]}* (я) - `{chart_stats[5][1]}`'
+                f'\n🥇*{chart_stats[0][0]}* — `{chart_stats[0][1]}`' \
+                f'\n🥈*{chart_stats[1][0]}* — `{chart_stats[1][1]}`' \
+                f'\n🥉*{chart_stats[2][0]}* — `{chart_stats[2][1]}`' \
+                f'\n▫️*{chart_stats[3][0]}* — `{chart_stats[3][1]}`' \
+                f'\n▫️*{chart_stats[4][0]}* — `{chart_stats[4][1]}`' \
+                f'\n\n*{chart_stats[5][0]}* (я) — `{chart_stats[5][1]}`'
 
             return my_result
 
