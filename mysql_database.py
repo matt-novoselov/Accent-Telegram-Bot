@@ -3,6 +3,7 @@ import asyncio
 import aiomysql
 from aiomysql import Error
 from dotenv import load_dotenv
+import main
 
 load_dotenv()
 # - - - - - - - - - - #
@@ -70,22 +71,55 @@ async def add_new_user_to_database(user_id, first_name, last_name):
             pass
 
 
-async def update_score(user_id, amount):
+async def motivation(correct_strike, mistakes_strike, user_id, amount):
+    try:
+        if amount < 0:
+            new_correct_strike = 0
+            new_mistakes_strike = mistakes_strike + 1
+        else:
+            new_mistakes_strike = 0
+            new_correct_strike = correct_strike + 1
+
+        if new_mistakes_strike % 3 == 0 and new_mistakes_strike != 0:
+            await main.send_motivation(user_id, False, new_mistakes_strike)
+        elif new_correct_strike % 5 == 0 and new_correct_strike != 0:
+            await main.send_motivation(user_id, True, new_correct_strike)
+
+        return new_correct_strike, new_mistakes_strike
+
+    except Error as e:
+        print(f'[!] There was an error in updating motivation strike: {e}')
+        pass
+
+
+async def update_score(user_id, amount, is_game):
     async with await get_cursor() as cur:
         try:
-            query = "SELECT Score FROM EgeBotUsers WHERE TelegramUserID = %s"
+            query = "SELECT Score, Strike, Mistakes_Strike FROM EgeBotUsers WHERE TelegramUserID = %s"
             data_query = (user_id,)
             await cur.execute(query, data_query)
-            current_score = await cur.fetchall()  # Get current score
-            current_score = list(current_score)[0][0]
+            current_score_table = await cur.fetchall()  # Get current score
+            current_score = list(current_score_table)[0][0]
+
             new_score = current_score + amount  # Calculate new score
             if new_score < 0:
                 new_score = 0
 
-            sql = "UPDATE EgeBotUsers SET Score = %s WHERE TelegramUserID = %s"
-            val = (new_score, user_id)
-            await cur.execute(sql, val)
-            await mydb.commit()  # Update DB Score
+            if is_game:
+                correct_strike = list(current_score_table)[0][1]
+                mistakes_strike = list(current_score_table)[0][2]
+                new_correct_strike, new_mistakes_strike = await motivation(correct_strike, mistakes_strike, user_id, amount)
+
+                sql = "UPDATE EgeBotUsers SET Score = %s, Strike  = %s, Mistakes_Strike = %s WHERE TelegramUserID = %s"
+                val = (new_score, new_correct_strike, new_mistakes_strike, user_id)
+                await cur.execute(sql, val)
+                await mydb.commit()  # Update DB Score
+
+            else:
+                sql = "UPDATE EgeBotUsers SET Score = %s WHERE TelegramUserID = %s"
+                val = (new_score, user_id)
+                await cur.execute(sql, val)
+                await mydb.commit()  # Update DB Score
 
             return new_score
 
@@ -136,8 +170,8 @@ async def CheckReferral(args, uid):
                     val = (1, uid)
                     await cur.execute(sql, val)
                     await mydb.commit()  # Update DB Score
-                    await update_score(uid, 50)
-                    await update_score(args, 50)
+                    await update_score(uid, 50, False)
+                    await update_score(args, 50, False)
                     print(f'[v] {args} invited {uid}')
                     return True
                 else:

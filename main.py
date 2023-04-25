@@ -4,6 +4,7 @@ import AccentWord
 import os
 import mysql_database
 from aiogram.utils.deep_linking import get_start_link
+import Motivation
 
 load_dotenv()
 bot = Bot(token=os.getenv('TOKEN'))
@@ -55,13 +56,25 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler()
 async def send_game(message: types.Message):
+    button_data = await AccentWord.GenerateAccents()
     try:
         await bot.send_message(message.chat.id, "💬 На какую букву ставится ударение в этом слове?",
                                parse_mode="Markdown",
-                               reply_markup=await AccentWord.GenerateAccents())
+                               reply_markup=button_data)
     except Exception as e:
         print(f"[!] Failed to send a new game. Trying again... Reason: {e}")
+        print(f"[!] Button data: {button_data}")
         await send_game(message)
+
+
+async def send_motivation(user_id, is_positive, score):
+    try:
+        if is_positive:
+            await bot.send_message(user_id, f'🔥 {(await Motivation.GoodStrikes()).format(count=score)}', parse_mode="Markdown")
+        else:
+            await bot.send_message(user_id, f'😌 {await Motivation.DontGiveUp()}', parse_mode="Markdown")
+    except Exception as e:
+        print(f"[!] Failed to send motivation. Reason: {e}")
 
 
 @dp.callback_query_handler()
@@ -69,10 +82,12 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     data_set = callback_query.data.split("#")
     if data_set[0] == data_set[1]:
         fine = 10
-        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine)
+        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine, True)
         try:
-            await callback_query["message"].edit_text(text=f"✅ *{data_set[1]}*\n\n`+{fine}` | Ваш счёт: `{user_score}`",
-                                                  parse_mode="Markdown")
+            word = data_set[1]
+            await callback_query["message"].edit_text(
+                text=f"✅ {await Motivation.Compliment()} *{word[:1].upper()}{word[1:]}*\n\n`+{fine}` | Ваш счёт: `{user_score}`",
+                parse_mode="Markdown")
         except Exception as e:
             print(f'[!] There was an error in editing message after response: {e}')
             pass
@@ -80,10 +95,10 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
         fine = -30
         print(
             f'[x] User {callback_query["message"]["chat"]["id"]} answered wrong {data_set[0]}. The correct answer is {data_set[1]}')
-        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine)
+        user_score = await mysql_database.update_score(callback_query["message"]["chat"]["id"], fine, True)
         try:
             await callback_query["message"].edit_text(
-                text=f"❌ Запомни: *{data_set[1]}*\n\n`{fine}` | Ваш счёт: `{user_score}`",
+                text=f"❌ Неверно, запомни: *{data_set[1]}*\n\n`{fine}` | Ваш счёт: `{user_score}`",
                 parse_mode="Markdown")
         except Exception as e:
             print(f'[!] There was an error in editing message after response: {e}')
