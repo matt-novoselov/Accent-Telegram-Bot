@@ -5,3 +5,5 @@ Source code of Aiogram based telegram bot that can help you to learn difficult c
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/ICY9k5?referralCode=RmyABJ)
 
 [![Telegram Bot](https://raw.githubusercontent.com/matt-novoselov/SystemFiles/main/telegram_button.svg)](https://t.me/AccentGameBot)
+
+Developed with ❤️ by Matt Novoselov
