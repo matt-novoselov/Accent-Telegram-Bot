@@ -1,16 +1,24 @@
 import random
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+# Load dictionary with all words
 Dict = open("Data/dictionary.txt", encoding="utf8").readlines()
+
+# Define vowel letters
 Vowels = ['а', 'о', 'и', 'ы', 'у', 'э', 'е', 'ё', 'ю', 'я']
+
+# Define vowel letters with accents
 AccentVowels = ['а́', 'о́', 'и́', 'ы́', 'у́', 'э́', 'е́', 'ё', 'ю́', 'я́']
 
 
+# Add accent to the vowel
 async def AddAccent(word, index):
+    # Exception letter fix
     fix_accent = word[index].replace("ё", "е")
     return word[:index] + AccentVowels[Vowels.index(fix_accent)] + word[index + 1:]
 
 
+# Generate all possible accents in the word
 async def GenerateAccents():
     try:
         word = Dict[random.randint(0, len(Dict) - 1)].rstrip()

@@ -5,11 +5,14 @@ from aiomysql import Error
 from dotenv import load_dotenv
 import main
 
+# Load secrets
 load_dotenv()
+
 # - - - - - - - - - - #
 loop = asyncio.get_event_loop()
 
 
+# Function to connect to the database with given credentials
 async def connect_db():
     try:
         connection = await aiomysql.connect(
@@ -30,6 +33,7 @@ async def connect_db():
         print(f'[!] There was an error in connecting to MySQL Server: {e}')
 
 
+# Get database cursor
 async def get_cursor():
     global mydb
     try:
@@ -45,6 +49,7 @@ mydb = loop.run_until_complete(connect_db())
 # - - - - - - - - - - #
 
 
+# Function to add a new user to the database if he is not registered yet
 async def add_new_user_to_database(user_id, first_name, last_name):
     user_name = first_name
     if last_name is not None:
@@ -71,6 +76,7 @@ async def add_new_user_to_database(user_id, first_name, last_name):
             pass
 
 
+# Store user strikes in the database
 async def motivation(correct_strike, mistakes_strike, user_id, amount):
     try:
         if amount < 0:
@@ -92,6 +98,7 @@ async def motivation(correct_strike, mistakes_strike, user_id, amount):
         pass
 
 
+# Update user score in the database
 async def update_score(user_id, amount, is_game):
     async with await get_cursor() as cur:
         try:
@@ -128,6 +135,7 @@ async def update_score(user_id, amount, is_game):
             pass
 
 
+# Get charts (statistics) of top 5 best users from the database
 async def get_stats(user_id):
     async with await get_cursor() as cur:
         try:
@@ -157,6 +165,7 @@ async def get_stats(user_id):
             pass
 
 
+# Function to check referral code usage
 async def CheckReferral(args, uid):
     async with await get_cursor() as cur:
         try:
