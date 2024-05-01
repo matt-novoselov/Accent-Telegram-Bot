@@ -1,6 +1,6 @@
 # Accent bot
 
-Source code for a Telegram bot built using Aiogram. This bot is designed to assist you in learning the challenging aspects of word accents. Compete with friends and earn points as you progress through your educational journey!
+Source code for a Telegram bot built using Aiogram. This bot is designed to assist you in learning difficult cases of accents in words. Complete lessons, practice, earn points, and compete with your friends for the highest score!
 
 ![](https://github.com/matt-novoselov/Accent-Telegram-Bot/blob/6667c31cb029512ae7d637f4c8426ca976f17706/Thumbnail.png)
 
