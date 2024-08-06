@@ -14,15 +14,9 @@ bot = Bot(token=os.getenv('TOKEN'))
 dp = Dispatcher(bot)
 
 # Setup keyboard actions
-kb = [[types.KeyboardButton(text="🏆 Статистика"), types.KeyboardButton(text="🛠️ ТехПоддержка")],
+kb = [[types.KeyboardButton(text="🏆 Статистика")],
       [types.KeyboardButton(text="👪 Пригласить друзей")]]
 keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder="")  # Create keyboard
-
-
-# Get support after pressing keyboard
-@dp.message_handler(text="🛠️ ТехПоддержка")
-async def get_support(message: types.Message):
-    await message.reply("🛠️ Связаться с ТехПоддержкой можно здесь: @NoveSupportBot")
 
 
 # Get statistics after pressing keyboard
