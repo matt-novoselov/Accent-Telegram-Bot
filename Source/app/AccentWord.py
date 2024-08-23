@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 # Load dictionary with all words
-Dict = open("Data/dictionary.txt", encoding="utf8").readlines()
+Dict = open("app/Data/dictionary.txt", encoding="utf8").readlines()
 
 # Define vowel letters
 Vowels = ['а', 'о', 'и', 'ы', 'у', 'э', 'е', 'ё', 'ю', 'я']
