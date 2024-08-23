@@ -1,12 +1,9 @@
-import os
+from app.config import DB_HOST, DB_PORT, DB_USERNAME, DB_NAME, DB_PASSWORD
 import asyncio
 import aiomysql
 from aiomysql import Error
-from dotenv import load_dotenv
-import main
+import app.bot as bot
 
-# Load secrets
-load_dotenv()
 
 # - - - - - - - - - - #
 loop = asyncio.get_event_loop()
@@ -16,11 +13,11 @@ loop = asyncio.get_event_loop()
 async def connect_db():
     try:
         connection = await aiomysql.connect(
-            host=os.getenv("HOST"),
-            port=24021,
-            user=os.getenv("DB_USERNAME"),
-            password=os.getenv("PASSWORD"),
-            db=os.getenv("DATABASE"),
+            host=DB_HOST,
+            port=int(DB_PORT),
+            user=DB_USERNAME,
+            password=DB_PASSWORD,
+            db=DB_NAME,
             loop=loop,
         )
 
@@ -87,9 +84,9 @@ async def motivation(correct_strike, mistakes_strike, user_id, amount):
             new_correct_strike = correct_strike + 1
 
         if new_mistakes_strike % 3 == 0 and new_mistakes_strike != 0:
-            await main.send_motivation(user_id, False, new_mistakes_strike)
+            await bot.send_motivation(user_id, False, new_mistakes_strike)
         elif new_correct_strike % 5 == 0 and new_correct_strike != 0:
-            await main.send_motivation(user_id, True, new_correct_strike)
+            await bot.send_motivation(user_id, True, new_correct_strike)
 
         return new_correct_strike, new_mistakes_strike
 
@@ -162,32 +159,4 @@ async def get_stats(user_id):
 
         except Error as e:
             print(f'[!] There was an error in getting stats: {e}')
-            pass
-
-
-# Function to check referral code usage
-async def CheckReferral(args, uid):
-    async with await get_cursor() as cur:
-        try:
-            if int(args) != int(uid):
-                query = "SELECT ReferralActivated FROM EgeBotUsers WHERE TelegramUserID = %s"
-                data_query = (uid,)
-                await cur.execute(query, data_query)
-                IsActivated = (await cur.fetchall())[0][0]
-                if IsActivated == 0:
-                    sql = "UPDATE EgeBotUsers SET ReferralActivated = %s WHERE TelegramUserID = %s"
-                    val = (1, uid)
-                    await cur.execute(sql, val)
-                    await mydb.commit()  # Update DB Score
-                    await update_score(uid, 50, False)
-                    await update_score(args, 50, False)
-                    print(f'[v] {args} invited {uid}')
-                    return True
-                else:
-                    return False
-            else:
-                return False
-
-        except Error as e:
-            print(f'[!] There was an error in activating referral: {e}')
             pass

@@ -1,5 +1,6 @@
 import random
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 # Load dictionary with all words
 Dict = open("Data/dictionary.txt", encoding="utf8").readlines()
@@ -32,24 +33,16 @@ async def GenerateAccents():
 
         dictionary = {"CorrectWord": correct_word, "VariationsArray": variations}
 
-        inline_kb_full = InlineKeyboardMarkup(row_width=2)
+        inline_kb_full = InlineKeyboardBuilder()
+
         i = len(dictionary['VariationsArray'])
         while i > 0:
-            if i % 2 == 0:
-                inline_kb_full.add(
-                    InlineKeyboardButton(dictionary['VariationsArray'][i - 1],
-                                         callback_data=f"{dictionary['VariationsArray'][i - 1]}#{dictionary['CorrectWord']}"),
-                    InlineKeyboardButton(dictionary['VariationsArray'][i - 2],
-                                         callback_data=f"{dictionary['VariationsArray'][i - 2]}#{dictionary['CorrectWord']}"),
-                )
-                i -= 2
-            else:
-                inline_kb_full.add(
-                    InlineKeyboardButton(dictionary['VariationsArray'][i - 1],
-                                         callback_data=f"{dictionary['VariationsArray'][i - 1]}#{dictionary['CorrectWord']}"),
-                )
-                i -= 1
-        return inline_kb_full
+            inline_kb_full.add(InlineKeyboardButton(text=dictionary['VariationsArray'][i - 1],
+                                                    callback_data=f"{dictionary['VariationsArray'][i - 1]}#{dictionary['CorrectWord']}"))
+            i -= 1
+
+        inline_kb_full.adjust(2, repeat=True)
+        return inline_kb_full.as_markup()
 
     except Exception as e:
         print(f'[!] There was an error in generating accents: {e}')
