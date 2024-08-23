@@ -1,9 +1,9 @@
 import random
 
 # Load datasets
-dont_give_up = open("Data/dont_give_up.txt", encoding="utf8").readlines()
-strikes = open("Data/strikes.txt", encoding="utf8").readlines()
-compliments = open("Data/compliments.txt", encoding="utf8").readlines()
+dont_give_up = open("app/Data/dont_give_up.txt", encoding="utf8").readlines()
+strikes = open("app/Data/strikes.txt", encoding="utf8").readlines()
+compliments = open("app/Data/compliments.txt", encoding="utf8").readlines()
 
 
 # Get random message of type "Don't give up" from dataset
