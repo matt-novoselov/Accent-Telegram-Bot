@@ -4,8 +4,6 @@ Source code for a Telegram bot built using Aiogram. This bot is designed to assi
 
 ![](https://github.com/matt-novoselov/Accent-Telegram-Bot/blob/6667c31cb029512ae7d637f4c8426ca976f17706/Thumbnail.png)
 
-[![Telegram Bot](https://github.com/matt-novoselov/matt-novoselov/blob/4fddb3cb2c7e952d38b8b09037040af183556a77/Files/telegram_button.svg)](https://t.me/AccentGameBot)
-
 
 ## Requirements
 - Python 3.8
